@@ -82,7 +82,10 @@ class SpriteSynth:
         elif len(parse_result.dresses) == 1:
             names = parse_result.dresses + parse_result.faces
         else:
-            raise ValueError(f"Invalid number of dresses: {parse_result.dresses}")
+            names = parse_result.dresses + parse_result.faces
+            print(
+                f"WARN: Invalid number of dresses: {parse_result.dresses}, can't ensure the correctness of the result."
+            )
 
         layers = self.get_layers(layers_info_path, names)
 
