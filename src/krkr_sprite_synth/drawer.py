@@ -18,7 +18,7 @@ def draw(layers: List[Layer], layer_type: str, base_path: Path) -> Image.Image:
         if not available_files:
             print(f"Layer {layer.name}:{layer.layer_id} not found, skipping")
             continue
-        image_path = base_path / available_files[0]
+        image_path = available_files[0]
         layer_image = Image.open(image_path)
         data.append((layer_image, layer))
 
