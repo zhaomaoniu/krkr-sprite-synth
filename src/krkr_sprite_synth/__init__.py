@@ -1,6 +1,6 @@
 from PIL import Image
-from typing import List
 from pathlib import Path
+from typing import List, Optional
 
 from .drawer import draw
 from .models import Layer, ParseResult
@@ -11,7 +11,7 @@ class SpriteSynth:
     def __init__(
         self,
         a_info_path: str,
-        b_info_path: str,
+        b_info_path: Optional[str],
         layers_info_path_template: str,
         assets_path: str,
     ):
@@ -29,7 +29,7 @@ class SpriteSynth:
         self.assets_path = Path(assets_path)
 
         self.a_info = self._read_file(self.a_info_path)
-        self.b_info = self._read_file(self.b_info_path)
+        self.b_info = self._read_file(self.b_info_path) if self.b_info_path else ""
 
         self.info_parser = InfoParser(a_info=self.a_info, b_info=self.b_info)
 
