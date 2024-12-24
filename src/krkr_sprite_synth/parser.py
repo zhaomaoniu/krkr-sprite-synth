@@ -80,7 +80,7 @@ class InfoParser:
 
         try:
             face_names = self.a_face[face] if info_type == "a" else self.b_face[face]
-            face_names = [name.split("/")[-1] for name in face_names]
+            face_names = [name.split("/")[-1].split("_", "/") for name in face_names]
         except KeyError:
             raise ValueError(f"Cannot find face name for {face} in {info_type} info")
 
