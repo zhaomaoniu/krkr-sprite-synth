@@ -20,9 +20,10 @@ class SpriteSynth:
 
         Args:
             a_info_path (str): a_info 文件路径，一般位于 /fgimage/<character_name>a_info.txt
-            b_info_path (str): b_info 文件路径，一般位于 /fgimage/<character_name>b_info.txt
+            b_info_path (str, optional): b_info 文件路径，一般位于 /fgimage/<character_name>b_info.txt
             layers_info_path_template (str): 图层信息文件路径模板，一般是 /fgimage/<character_name>/<character_name>{info_type}.txt
             assets_path (str): 资源文件夹路径，一般是 /fgimage/<character_name>
+            character_name (str, optional): 角色名，用于辅助查找图层图片. Defaults to None
         """
         self.a_info_path = a_info_path
         self.b_info_path = b_info_path
