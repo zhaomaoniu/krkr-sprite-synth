@@ -1,20 +1,29 @@
 import re
 from PIL import Image
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 from .models import Layer
 
 
-def draw(layers: List[Layer], layer_type: str, base_path: Path) -> Image.Image:
+def draw(
+    layers: List[Layer],
+    layer_type: str,
+    base_path: Path,
+    character_name: Optional[str] = None,
+) -> Image.Image:
     data: List[Tuple[Image.Image, Layer]] = []
     files = list(base_path.glob(f"*{layer_type}_*.png"))
     for layer in layers:
-        available_files = [
-            file
-            for file in files
-            if re.search(rf"^.+{layer_type}_{layer.layer_id}.png$", file.name)
-        ]
+        check = (
+            (lambda name: re.search(rf"^.+{layer_type}_{layer.layer_id}.png$", name))
+            if character_name is None
+            else (
+                lambda name: f"{character_name}{layer_type}_{layer.layer_id}.png"
+                == name
+            )
+        )
+        available_files = [file for file in files if check(file.name)]
         if not available_files:
             print(f"Layer {layer.name}:{layer.layer_id} not found, skipping")
             continue

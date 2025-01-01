@@ -111,7 +111,7 @@ def parse_layers(layers_info: str) -> List[Layer]:
         # Parse row into Layer object
         layer = Layer(
             layer_type=int(row[0]) if row[0] else -1,
-            name=row[1],
+            name=row[1].replace("_", "/"),
             left=int(row[2]) if row[2] else 0,
             top=int(row[3]) if row[3] else 0,
             width=int(row[4]) if row[4] else 0,

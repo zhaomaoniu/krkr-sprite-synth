@@ -14,6 +14,7 @@ class SpriteSynth:
         b_info_path: Optional[str],
         layers_info_path_template: str,
         assets_path: str,
+        character_name: Optional[str] = None,
     ):
         """初始化 SpriteSynth 类。
 
@@ -27,6 +28,7 @@ class SpriteSynth:
         self.b_info_path = b_info_path
         self.layers_info_path_template = layers_info_path_template
         self.assets_path = Path(assets_path)
+        self.character_name = character_name
 
         self.a_info = self._read_file(self.a_info_path)
         self.b_info = self._read_file(self.b_info_path) if self.b_info_path else ""
@@ -89,7 +91,9 @@ class SpriteSynth:
 
         layers = self.get_layers(layers_info_path, names)
 
-        return draw(layers, parse_result.info_type, self.assets_path)
+        return draw(
+            layers, parse_result.info_type, self.assets_path, self.character_name
+        )
 
 
 __all__ = ["SpriteSynth"]
