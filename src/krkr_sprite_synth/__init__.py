@@ -44,19 +44,64 @@ class SpriteSynth:
         """解析给定文件的信息并返回解析结果。"""
         return self.info_parser.parse(dress=dress, face=face, pose=pose)
 
+    def _find_layer(
+        self, names: List[str], all_layers: List[Layer], group_id: int = -1
+    ) -> Optional[Layer]:
+        """Find layer by hierarchical names and group ID.
+
+        Args:
+            names: List of layer names forming a path (e.g. ['group1', 'group2', 'layer'])
+            all_layers: List of all available layers
+            group_id: Parent group layer ID, -1 means root level
+
+        Returns:
+            Matching Layer object or None if not found
+        """
+        current_group_id = group_id
+
+        for i, name in enumerate(names):
+            # For each name, find matching layer in current group
+            matching_layers = [
+                layer
+                for layer in all_layers
+                if layer.name == name
+                and (current_group_id == -1 or layer.group_layer_id == current_group_id)
+                and (layer.layer_type == 2 or i == len(names) - 1)
+                # layer_type: 0 - layer, 2 - group
+            ]
+
+            if not matching_layers:
+                print(
+                    f"WARN: Cannot find layer {name} in group {current_group_id}, skipping."
+                )
+                return None
+
+            # Last name in path - return the layer
+            if i == len(names) - 1:
+                return matching_layers[0]
+
+            # Update group ID for next iteration
+            current_group_id = matching_layers[0].layer_id
+
+        return None
+
     def get_layers(self, layers_info_path: str, names: List[str]) -> List[Layer]:
         """解析图层信息并返回相关图层。"""
         layers_info = self._read_file(layers_info_path)
         all_layers = parse_layers(layers_info=layers_info)
 
-        layers = []
+        layers: set[int] = set()
 
         for name in names:
-            for layer in all_layers:
-                if layer.name == name:
-                    layers.append(layer)
+            layer = self._find_layer(name.split("/"), all_layers)
+            layers.add(layer.layer_id) if layer else None
 
-        return layers
+        result = []
+        for layer in all_layers:
+            if layer.layer_id in layers:
+                result.append(layer)
+
+        return result[::-1]
 
     def draw(self, dress: str, face: str, pose: str) -> Image.Image:
         """绘制立绘
@@ -76,19 +121,7 @@ class SpriteSynth:
         layers_info_path = self.layers_info_path_template.format(
             info_type=parse_result.info_type
         )
-        if len(parse_result.dresses) == 2:
-            names = (
-                [parse_result.dresses[0]]
-                + parse_result.faces
-                + [parse_result.dresses[1]]
-            )
-        elif len(parse_result.dresses) == 1:
-            names = parse_result.dresses + parse_result.faces
-        else:
-            names = parse_result.dresses + parse_result.faces
-            print(
-                f"WARN: Invalid number of dresses: {parse_result.dresses}, can't ensure the correctness of the result."
-            )
+        names = parse_result.dresses + parse_result.faces
 
         layers = self.get_layers(layers_info_path, names)
 
