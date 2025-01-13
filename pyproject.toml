@@ -1,6 +1,6 @@
 [project]
 name = "krkr-sprite-synth"
-version = "0.1.6"
+version = "0.1.7"
 description = "A library for synthesizing character sprites for galgame games using the krkr engine"
 authors = [
     {name = "zhaomaoniu", email = "2667292003@qq.com"},

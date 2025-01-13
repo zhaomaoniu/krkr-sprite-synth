@@ -1,6 +1,7 @@
+import re
 import csv
 from collections import defaultdict
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Callable
 
 from .models import Layer, ParseResult
 
@@ -78,12 +79,46 @@ class InfoParser:
         if dress_names is None or info_type is None:
             raise ValueError(f"Cannot find dress name for {dress}-{pose}")
 
-        try:
-            face_names = self.a_face[face] if info_type == "a" else self.b_face[face]
-        except KeyError:
+        face_dict = self.a_face if info_type == "a" else self.b_face
+        face_dict = {
+            tuple(k.split("@", maxsplit=1)) if "@" in k else (k, "*"): v
+            for k, v in face_dict.items()
+        }
+
+        face_names = None
+        for (face_, condition), names in face_dict.items():
+            if face_ == face and self._condition_to_func(condition)(dress):
+                face_names = names
+                break
+        if face_names is None:
             raise ValueError(f"Cannot find face name for {face} in {info_type} info")
 
         return ParseResult(dresses=dress_names, faces=face_names, info_type=info_type)
+
+    def _condition_to_func(self, condition: str) -> Callable[[str], bool]:
+        """将条件字符串转换为函数
+
+        Args:
+            condition (str): 条件字符串
+
+        Returns:
+            Callable[[str], bool]: 函数，接受一个字符串参数，返回是否满足条件
+        """
+        not_condition = condition.startswith("!")
+        condition = condition.removeprefix("!")
+
+        if condition == "*":
+            return lambda _: not not_condition  # 条件 "*" 匹配所有情况
+
+        # 将条件转换为正则表达式
+        regex_pattern = re.escape(condition).replace("\\*", ".*")
+        regex = re.compile(f"^{regex_pattern}$")
+
+        def match_func(dress: str) -> bool:
+            matches = bool(regex.match(dress))
+            return not matches if not_condition else matches
+
+        return match_func
 
 
 def parse_layers(layers_info: str) -> List[Layer]:
