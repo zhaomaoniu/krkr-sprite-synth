@@ -12,7 +12,8 @@ class SpriteSynth:
         self,
         a_info_path: str,
         b_info_path: Optional[str],
-        layers_info_path_template: str,
+        a_layers_info_path: str,
+        b_layers_info_path: Optional[str],
         assets_path: str,
         character_name: Optional[str] = None,
     ):
@@ -21,13 +22,15 @@ class SpriteSynth:
         Args:
             a_info_path (str): a_info 文件路径，一般位于 /fgimage/<character_name>a_info.txt
             b_info_path (str, optional): b_info 文件路径，一般位于 /fgimage/<character_name>b_info.txt
-            layers_info_path_template (str): 图层信息文件路径模板，一般是 /fgimage/<character_name>/<character_name>{info_type}.txt
+            a_layers_info_path (str): a_info 对应的图层信息文件路径，一般位于 /fgimage/<character_name>a.txt
+            b_layers_info_path (str, optional): b_info 对应的图层信息文件路径，一般位于 /fgimage/<character_name>b.txt
             assets_path (str): 资源文件夹路径，一般是 /fgimage/<character_name>
             character_name (str, optional): 角色名，用于辅助查找图层图片. Defaults to None
         """
         self.a_info_path = a_info_path
         self.b_info_path = b_info_path
-        self.layers_info_path_template = layers_info_path_template
+        self.a_layers_info_path_template = a_layers_info_path
+        self.b_layers_info_path_template = b_layers_info_path
         self.assets_path = Path(assets_path)
         self.character_name = character_name
 
@@ -118,8 +121,10 @@ class SpriteSynth:
             Image.Image: 绘制好的立绘
         """
         parse_result = self.get_parse_result(dress=dress, face=face, pose=pose)
-        layers_info_path = self.layers_info_path_template.format(
-            info_type=parse_result.info_type
+        layers_info_path = (
+            self.a_layers_info_path_template
+            if parse_result.info_type == "a"
+            else self.b_layers_info_path_template
         )
         names = parse_result.dresses + parse_result.faces
 
