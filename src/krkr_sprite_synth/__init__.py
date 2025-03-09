@@ -1,6 +1,6 @@
 from PIL import Image
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from .drawer import draw
 from .models import Layer, ParseResult
@@ -14,7 +14,7 @@ class SpriteSynth:
         b_info_path: Optional[str],
         a_layers_info_path: str,
         b_layers_info_path: Optional[str],
-        assets_path: str,
+        assets_path: Union[str, Path],
         character_name: Optional[str] = None,
     ):
         """初始化 SpriteSynth 类。
@@ -113,9 +113,6 @@ class SpriteSynth:
             dress (str): 服装名
             face (str): 表情序号
             pose (str): 姿势序号
-
-        Raises:
-            ValueError: 如果匹配到的服装数量不为 1 或 2
 
         Returns:
             Image.Image: 绘制好的立绘

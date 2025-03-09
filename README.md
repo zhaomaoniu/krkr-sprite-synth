@@ -15,10 +15,14 @@ synth = SpriteSynth(
     # Path to a_info file, usually located at /fgimage/<character_name>a_info.txt
     b_info_path='b_info.txt',
     # Path to b_info file, usually located at /fgimage/<character_name>b_info.txt
-    layers_info_path_template='{info_type}.txt',
-    # Path to layer info files, usually located at /fgimage/<character_name>/<character_name>{info_type}.txt
+    a_layers_info_path='a.txt',
+    # Path to a layer info files, usually located at /fgimage/<character_name>/<character_name>a.txt
+    b_layers_info_path='b.txt',
+    # Path to b layer info files, usually located at /fgimage/<character_name>/<character_name>b.txt
     assets_path='assets',
     # Path to the assets folder, usually located at /fgimage/<character_name>
+    character_name='character_name',
+    # Name of the character, used to assist in locating the layer images
 )
 
 # Generate the sprite sheet
