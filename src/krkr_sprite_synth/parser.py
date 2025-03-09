@@ -31,7 +31,6 @@ class InfoParser:
             face_dict: Dict[str, List[str]],
         ):
             for line in info.split("\n"):
-                line = line.strip()
                 if not line:
                     continue
                 parts = line.split("\t")
